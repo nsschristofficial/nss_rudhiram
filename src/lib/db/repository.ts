@@ -49,7 +49,98 @@ interface StoreData {
   admins: AdminUser[];
 }
 
-function getLocalStore(): StoreData {
+// Cloud Persistence via GitHub API (Active in Serverless / Vercel Production)
+const GH_TOKEN = process.env.GITHUB_DATABASE_TOKEN;
+const GH_REPO = process.env.GITHUB_DATABASE_REPO || 'nsschristofficial/nss_rudhiram';
+const GH_PATH = 'data/rudhiram-store.json';
+let lastKnownSha: string | null = null;
+let lastSyncTime = 0;
+
+async function fetchFromCloud(): Promise<StoreData | null> {
+  if (!GH_TOKEN) return null;
+  try {
+    const res = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/${GH_PATH}`, {
+      headers: {
+        Authorization: `Bearer ${GH_TOKEN}`,
+        Accept: 'application/vnd.github.v3+json',
+        'User-Agent': 'Rudhiram-Portal',
+      },
+      cache: 'no-store',
+    });
+    if (!res.ok) return null;
+    const body = await res.json();
+    lastKnownSha = body.sha;
+    const decoded = Buffer.from(body.content, 'base64').toString('utf-8');
+    const parsed = JSON.parse(decoded);
+    return parsed;
+  } catch (err) {
+    console.warn('Could not fetch from cloud database:', err);
+    return null;
+  }
+}
+
+async function syncToCloud(data: StoreData): Promise<void> {
+  if (!GH_TOKEN) return;
+  try {
+    // If we don't have sha yet, fetch it
+    if (!lastKnownSha) {
+      const getRes = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/${GH_PATH}`, {
+        headers: {
+          Authorization: `Bearer ${GH_TOKEN}`,
+          Accept: 'application/vnd.github.v3+json',
+          'User-Agent': 'Rudhiram-Portal',
+        },
+        cache: 'no-store',
+      });
+      if (getRes.ok) {
+        const body = await getRes.json();
+        lastKnownSha = body.sha;
+      }
+    }
+
+    const contentBase64 = Buffer.from(JSON.stringify(data, null, 2)).toString('base64');
+    const putRes = await fetch(`https://api.github.com/repos/${GH_REPO}/contents/${GH_PATH}`, {
+      method: 'PUT',
+      headers: {
+        Authorization: `Bearer ${GH_TOKEN}`,
+        Accept: 'application/vnd.github.v3+json',
+        'Content-Type': 'application/json',
+        'User-Agent': 'Rudhiram-Portal',
+      },
+      body: JSON.stringify({
+        message: 'chore(db): auto-sync cloud database state [skip ci]',
+        content: contentBase64,
+        sha: lastKnownSha,
+      }),
+    });
+
+    if (putRes.ok) {
+      const resBody = await putRes.json();
+      lastKnownSha = resBody.content?.sha || null;
+    } else {
+      const errText = await putRes.text();
+      console.warn('Cloud sync error response:', errText);
+      // Reset sha so next call fetches latest
+      lastKnownSha = null;
+    }
+  } catch (err) {
+    console.warn('Background cloud database sync failed:', err);
+    lastKnownSha = null;
+  }
+}
+
+async function getLocalStore(): Promise<StoreData> {
+  // Sync periodically or if not loaded
+  const now = Date.now();
+  if (GH_TOKEN && (!memoryStore || now - lastSyncTime > 15000)) {
+    const cloudData = await fetchFromCloud();
+    if (cloudData) {
+      memoryStore = cloudData;
+      lastSyncTime = now;
+      return memoryStore;
+    }
+  }
+
   if (memoryStore) {
     return memoryStore;
   }
@@ -60,7 +151,6 @@ function getLocalStore(): StoreData {
     }
 
     if (!fs.existsSync(STORE_FILE)) {
-      // Check if project bundled store exists in process.cwd()/data/rudhiram-store.json
       const bundledPath = path.join(process.cwd(), 'data', 'rudhiram-store.json');
       let initial: StoreData;
       if (fs.existsSync(bundledPath)) {
@@ -119,6 +209,11 @@ function saveLocalStore(data: StoreData) {
   } catch (err) {
     console.warn('Could not persist to disk, retained in memory:', err);
   }
+
+  // Trigger background cloud database sync
+  if (GH_TOKEN) {
+    syncToCloud(data).catch((e) => console.warn('Async cloud sync error:', e));
+  }
 }
 
 export const repository = {
@@ -150,7 +245,7 @@ export const repository = {
       }
     }
 
-    const store = getLocalStore();
+    const store = await getLocalStore();
     store.logs.unshift(logItem);
     // keep latest 200 logs
     if (store.logs.length > 200) store.logs = store.logs.slice(0, 200);
@@ -172,7 +267,7 @@ export const repository = {
       }
     }
 
-    const store = getLocalStore();
+    const store = await getLocalStore();
     return store.logs.slice(0, limit);
   },
 
@@ -210,7 +305,7 @@ export const repository = {
       }
     }
 
-    const store = getLocalStore();
+    const store = await getLocalStore();
     let result = [...store.donors];
 
     if (filters?.blood_group && filters.blood_group !== 'ALL') {
@@ -247,12 +342,12 @@ export const repository = {
       } catch {}
     }
 
-    const store = getLocalStore();
+    const store = await getLocalStore();
     return store.donors.find((d) => d.id === id) || null;
   },
 
   async createDonor(data: Omit<Donor, 'id' | 'created_at' | 'updated_at'>): Promise<Donor> {
-    const store = getLocalStore();
+    const store = await getLocalStore();
 
     // Check duplicate phone in active records
     const existing = store.donors.find((d) => d.mobile === data.mobile);
@@ -324,7 +419,7 @@ export const repository = {
       } catch {}
     }
 
-    const store = getLocalStore();
+    const store = await getLocalStore();
     const idx = store.donors.findIndex((d) => d.id === id);
     if (idx === -1) return null;
 
@@ -359,7 +454,7 @@ export const repository = {
       } catch {}
     }
 
-    const store = getLocalStore();
+    const store = await getLocalStore();
     const target = store.donors.find((d) => d.id === id);
     if (!target) return false;
 
@@ -415,7 +510,7 @@ export const repository = {
       } catch {}
     }
 
-    const store = getLocalStore();
+    const store = await getLocalStore();
     let result = [...store.requests];
 
     if (filters?.blood_group && filters.blood_group !== 'ALL') {
@@ -462,7 +557,7 @@ export const repository = {
       } catch {}
     }
 
-    const store = getLocalStore();
+    const store = await getLocalStore();
     return store.requests.find((r) => r.id === id) || null;
   },
 
@@ -499,7 +594,7 @@ export const repository = {
       }
     }
 
-    const store = getLocalStore();
+    const store = await getLocalStore();
     store.requests.unshift(newRequest);
     saveLocalStore(store);
 
@@ -546,7 +641,7 @@ export const repository = {
       } catch {}
     }
 
-    const store = getLocalStore();
+    const store = await getLocalStore();
     const idx = store.requests.findIndex((r) => r.id === id);
     if (idx === -1) return null;
 
@@ -585,7 +680,7 @@ export const repository = {
       } catch {}
     }
 
-    const store = getLocalStore();
+    const store = await getLocalStore();
     const target = store.requests.find((r) => r.id === id);
     if (!target) return false;
 
@@ -705,12 +800,12 @@ export const repository = {
 
   // Administrator Management
   async getAdmins(): Promise<Omit<AdminUser, 'password'>[]> {
-    const store = getLocalStore();
+    const store = await getLocalStore();
     return store.admins.map(({ password, ...admin }) => admin);
   },
 
   async findAdminByCredentials(email: string, pass: string): Promise<AdminUser | null> {
-    const store = getLocalStore();
+    const store = await getLocalStore();
     const cleanEmail = email.trim().toLowerCase();
     const admin = store.admins.find((a) => a.email.toLowerCase() === cleanEmail);
     if (!admin) return null;
@@ -726,7 +821,7 @@ export const repository = {
     data: { name: string; email: string; password?: string; role: AdminUser['role']; nss_unit?: string },
     actorName = 'Super Administrator'
   ): Promise<Omit<AdminUser, 'password'>> {
-    const store = getLocalStore();
+    const store = await getLocalStore();
     const cleanEmail = data.email.trim().toLowerCase();
 
     if (store.admins.some((a) => a.email.toLowerCase() === cleanEmail)) {
@@ -759,7 +854,7 @@ export const repository = {
   },
 
   async deleteAdmin(id: string, actorName = 'Super Administrator'): Promise<boolean> {
-    const store = getLocalStore();
+    const store = await getLocalStore();
     const target = store.admins.find((a) => a.id === id);
     if (!target) return false;
 
