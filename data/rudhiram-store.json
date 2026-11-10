@@ -49,11 +49,11 @@
       "district": "Thrissur",
       "required_date": "2026-11-25",
       "urgency": "Emergency",
-      "additional_information": "Emergency ICU trauma case",
-      "status": "Under Review",
+      "additional_information": "Emergency ICU trauma case | Fulfilled by donor: Devika Nair (O+, Ph: +91 9745858982) on 2026-11-10",
+      "status": "Completed",
       "id": "6021b620-38ad-4871-8498-e5d9a4ae455b",
       "created_at": "2026-11-10T03:21:34.368Z",
-      "updated_at": "2026-11-10T03:21:34.416Z"
+      "updated_at": "2026-11-10T10:10:00.242Z"
     }
   ],
   "logs": [
