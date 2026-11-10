@@ -1,0 +1,113 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary-blood: #A50021;
+  --dark-blood: #7B0019;
+  --deep-blood: #550011;
+  --charcoal: #1C1917;
+  --surface-cream: #FCFAF8;
+}
+
+body {
+  color: var(--charcoal);
+  background-color: #FFFFFF;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #E2E8F0;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #A50021;
+}
+
+/* Glassmorphism helpers */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+}
+
+.glass-pill {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+/* Fluid Organic Glow */
+.blood-radial-glow {
+  background: radial-gradient(circle at 50% 30%, rgba(165, 0, 33, 0.08) 0%, rgba(255, 255, 255, 0) 70%);
+}
+
+/* Animations */
+@keyframes emergencyPulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.88;
+    transform: scale(1.02);
+  }
+}
+
+.animate-emergency-pulse {
+  animation: emergencyPulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Heartbeat pulse animation */
+@keyframes heartbeat {
+  0% { transform: scale(1); }
+  14% { transform: scale(1.15); }
+  28% { transform: scale(1); }
+  42% { transform: scale(1.12); }
+  70% { transform: scale(1); }
+}
+
+.animate-heartbeat {
+  animation: heartbeat 2.2s ease-in-out infinite;
+}
+
+/* Gentle float animation */
+@keyframes floatUpAndDown {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.animate-float {
+  animation: floatUpAndDown 5s ease-in-out infinite;
+}
+
+/* Ambient gradient wave animation */
+@keyframes ambientWave {
+  0% { transform: scale(1) translate(0px, 0px); }
+  50% { transform: scale(1.08) translate(-10px, 15px); }
+  100% { transform: scale(1) translate(0px, 0px); }
+}
+
+.animate-ambient-wave {
+  animation: ambientWave 12s ease-in-out infinite;
+}
+
+/* Interactive slider accent */
+input[type=range] {
+  accent-color: #A50021;
+}

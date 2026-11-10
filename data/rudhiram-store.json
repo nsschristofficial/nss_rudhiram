@@ -1,0 +1,192 @@
+{
+  "donors": [
+    {
+      "full_name": "Devika Nair",
+      "age": 22,
+      "gender": "Female",
+      "blood_group": "O+",
+      "mobile": "9745858982",
+      "email": "devika.nair@christcollegeijk.edu.in",
+      "district": "Thrissur",
+      "locality": "Irinjalakuda North",
+      "pincode": "680125",
+      "last_donation_date": null,
+      "availability": "Available",
+      "additional_information": "NSS Unit 49 volunteer",
+      "consent": true,
+      "id": "6a4f4cde-3971-4482-b498-5feca5f19e78",
+      "created_at": "2026-11-10T03:21:33.351Z",
+      "updated_at": "2026-11-10T03:21:33.351Z"
+    },
+    {
+      "full_name": "Sidharth R. Menon",
+      "age": 21,
+      "gender": "Male",
+      "blood_group": "A+",
+      "mobile": "9847606791",
+      "email": "sidharth.menon@christcollegeijk.edu.in",
+      "district": "Thrissur",
+      "locality": "Irinjalakuda Town",
+      "pincode": "680121",
+      "last_donation_date": null,
+      "availability": "Available",
+      "additional_information": "NSS Unit 20 executive committee volunteer",
+      "consent": true,
+      "id": "bcb62074-0533-4f91-94ba-3afe7adf0b62",
+      "created_at": "2026-11-10T03:21:32.335Z",
+      "updated_at": "2026-11-10T03:21:32.335Z"
+    }
+  ],
+  "requests": [
+    {
+      "patient_name": "Valsala Kumari",
+      "contact_person": "Vinod (Son)",
+      "contact_number": "9745212698",
+      "blood_group": "O-",
+      "units_required": 2,
+      "hospital_name": "Taluk Headquarters Hospital",
+      "hospital_location": "Irinjalakuda",
+      "district": "Thrissur",
+      "required_date": "2026-11-25",
+      "urgency": "Emergency",
+      "additional_information": "Emergency ICU trauma case",
+      "status": "Under Review",
+      "id": "6021b620-38ad-4871-8498-e5d9a4ae455b",
+      "created_at": "2026-11-10T03:21:34.368Z",
+      "updated_at": "2026-11-10T03:21:34.416Z"
+    }
+  ],
+  "logs": [
+    {
+      "id": "53a496d8-aeef-4ea7-a949-4ac58087f4f9",
+      "admin_name": "NSS Administrator",
+      "action": "Administrator logged out",
+      "record_type": "auth",
+      "record_id": "admin_primary_01",
+      "details": "NSS Programme Officer logged out",
+      "timestamp": "2026-11-10T03:21:34.497Z"
+    },
+    {
+      "id": "801feb70-6666-4d80-8dda-88b424f75e3b",
+      "admin_name": "NSS Administrator",
+      "action": "Administrator logged in",
+      "record_type": "auth",
+      "record_id": "admin_view_03",
+      "details": "NSS Read-Only Observer Desk (viewer@christcollegeijk.edu.in) logged in successfully",
+      "timestamp": "2026-11-10T03:21:34.481Z"
+    },
+    {
+      "id": "e560366a-b87c-450a-9f3d-501e058d3d84",
+      "admin_name": "NSS Programme Officer",
+      "action": "Administrator account deleted",
+      "record_type": "auth",
+      "record_id": "admin_1794280894451",
+      "details": "Removed admin account: Prof. Arun Thomas (arun.thomas@christcollegeijk.edu.in)",
+      "timestamp": "2026-11-10T03:21:34.464Z"
+    },
+    {
+      "id": "09f016d6-de2e-419a-aa98-b06e7eb55870",
+      "admin_name": "NSS Programme Officer",
+      "action": "New administrator account created (coordinator)",
+      "record_type": "auth",
+      "record_id": "admin_1794280894451",
+      "details": "Created coordinator account for Prof. Arun Thomas (arun.thomas@christcollegeijk.edu.in)",
+      "timestamp": "2026-11-10T03:21:34.451Z"
+    },
+    {
+      "id": "f1d11a87-d75a-4872-8a2b-16d0b6676328",
+      "admin_name": "NSS Programme Officer",
+      "action": "Exported donor records (CSV)",
+      "record_type": "export",
+      "details": "Exported 2 records. Filter: blood_group=ALL, district=ALL",
+      "timestamp": "2026-11-10T03:21:34.439Z"
+    },
+    {
+      "id": "c3ae8acd-2350-4df2-b20c-d26a99f6b4d1",
+      "admin_name": "NSS Programme Officer",
+      "action": "Request status updated: Under Review",
+      "record_type": "blood_request",
+      "record_id": "6021b620-38ad-4871-8498-e5d9a4ae455b",
+      "details": "Status changed to Under Review for patient Valsala Kumari",
+      "timestamp": "2026-11-10T03:21:34.417Z"
+    },
+    {
+      "id": "b8f9f36e-3458-4b12-b1a5-453a5f51a146",
+      "admin_name": "NSS Administrator",
+      "action": "Administrator logged in",
+      "record_type": "auth",
+      "record_id": "admin_primary_01",
+      "details": "NSS Programme Officer (admin@christcollegeijk.edu.in) logged in successfully",
+      "timestamp": "2026-11-10T03:21:34.396Z"
+    },
+    {
+      "id": "af7e489c-f48b-441d-9aff-afa459e9dacb",
+      "admin_name": "NSS Administrator",
+      "action": "Failed administrator login attempt",
+      "record_type": "auth",
+      "details": "Attempted login for: admin@christcollegeijk.edu.in",
+      "timestamp": "2026-11-10T03:21:34.392Z"
+    },
+    {
+      "id": "7b53bc28-5089-476d-a55b-7daf71c2dcc0",
+      "admin_name": "NSS Administrator",
+      "action": "New blood request (Emergency)",
+      "record_type": "blood_request",
+      "record_id": "6021b620-38ad-4871-8498-e5d9a4ae455b",
+      "details": "Patient: Valsala Kumari, Blood: O- (2 units) at Taluk Headquarters Hospital",
+      "timestamp": "2026-11-10T03:21:34.369Z"
+    },
+    {
+      "id": "1635c0eb-6ab6-40f2-abcf-4d760c7c3b87",
+      "admin_name": "NSS Administrator",
+      "action": "New voluntary donor registered",
+      "record_type": "donor",
+      "record_id": "6a4f4cde-3971-4482-b498-5feca5f19e78",
+      "details": "Devika Nair (O+) from Thrissur, Irinjalakuda North",
+      "timestamp": "2026-11-10T03:21:33.351Z"
+    },
+    {
+      "id": "5cfa6d8b-867a-4d93-a052-cd2a6d851c3b",
+      "admin_name": "NSS Administrator",
+      "action": "New voluntary donor registered",
+      "record_type": "donor",
+      "record_id": "bcb62074-0533-4f91-94ba-3afe7adf0b62",
+      "details": "Sidharth R. Menon (A+) from Thrissur, Irinjalakuda Town",
+      "timestamp": "2026-11-10T03:21:32.336Z"
+    },
+    {
+      "id": "init_log_01",
+      "admin_name": "System",
+      "action": "Database reset & initialized clean",
+      "record_type": "system",
+      "details": "All sample and test records cleared as requested.",
+      "timestamp": "2026-11-10T03:18:00.000Z"
+    }
+  ],
+  "admins": [
+    {
+      "id": "admin_primary_01",
+      "email": "admin@christcollegeijk.edu.in",
+      "name": "NSS Programme Officer",
+      "role": "superadmin",
+      "nss_unit": "NSS Units 20 & 49, Christ College",
+      "created_at": "2026-11-10T00:00:00.000Z"
+    },
+    {
+      "id": "admin_coord_02",
+      "email": "coordinator@christcollegeijk.edu.in",
+      "name": "NSS Student Volunteer Coordinator",
+      "role": "coordinator",
+      "nss_unit": "NSS Units 20 & 49",
+      "created_at": "2026-11-10T00:00:00.000Z"
+    },
+    {
+      "id": "admin_view_03",
+      "email": "viewer@christcollegeijk.edu.in",
+      "name": "NSS Read-Only Observer Desk",
+      "role": "viewer",
+      "nss_unit": "Hospital / Observer Desk",
+      "created_at": "2026-11-10T00:00:00.000Z"
+    }
+  ]
+}
