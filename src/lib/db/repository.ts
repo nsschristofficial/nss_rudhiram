@@ -7,8 +7,13 @@ import { createAdminClient } from '../supabase/admin';
 import { BLOOD_COMPATIBILITY } from '../constants';
 import { isEligibleByDate } from '../utils';
 
-const DATA_DIR = path.join(process.cwd(), 'data');
+// In Serverless environments like Vercel Lambda, the filesystem root is read-only.
+// We prioritize /tmp if DATA_DIR cannot be written, plus an in-memory cache fallback.
+const DATA_DIR = process.env.VERCEL ? path.join('/tmp', 'data') : path.join(process.cwd(), 'data');
 const STORE_FILE = path.join(DATA_DIR, 'rudhiram-store.json');
+
+// In-memory cache in case disk write is unavailable or across warm lambda invocations
+let memoryStore: StoreData | null = null;
 
 const defaultAdmins: AdminUser[] = [
   {
@@ -45,45 +50,75 @@ interface StoreData {
 }
 
 function getLocalStore(): StoreData {
-  if (!fs.existsSync(DATA_DIR)) {
-    fs.mkdirSync(DATA_DIR, { recursive: true });
-  }
-
-  if (!fs.existsSync(STORE_FILE)) {
-    const initial: StoreData = {
-      donors: initialDonors,
-      requests: initialBloodRequests,
-      logs: initialActivityLogs,
-      admins: defaultAdmins,
-    };
-    fs.writeFileSync(STORE_FILE, JSON.stringify(initial, null, 2), 'utf-8');
-    return initial;
+  if (memoryStore) {
+    return memoryStore;
   }
 
   try {
+    if (!fs.existsSync(DATA_DIR)) {
+      fs.mkdirSync(DATA_DIR, { recursive: true });
+    }
+
+    if (!fs.existsSync(STORE_FILE)) {
+      // Check if project bundled store exists in process.cwd()/data/rudhiram-store.json
+      const bundledPath = path.join(process.cwd(), 'data', 'rudhiram-store.json');
+      let initial: StoreData;
+      if (fs.existsSync(bundledPath)) {
+        try {
+          initial = JSON.parse(fs.readFileSync(bundledPath, 'utf-8'));
+        } catch {
+          initial = {
+            donors: initialDonors,
+            requests: initialBloodRequests,
+            logs: initialActivityLogs,
+            admins: defaultAdmins,
+          };
+        }
+      } else {
+        initial = {
+          donors: initialDonors,
+          requests: initialBloodRequests,
+          logs: initialActivityLogs,
+          admins: defaultAdmins,
+        };
+      }
+      fs.writeFileSync(STORE_FILE, JSON.stringify(initial, null, 2), 'utf-8');
+      memoryStore = initial;
+      return initial;
+    }
+
     const raw = fs.readFileSync(STORE_FILE, 'utf-8');
     const parsed = JSON.parse(raw);
     if (!parsed.admins || parsed.admins.length === 0) {
       parsed.admins = defaultAdmins;
       saveLocalStore(parsed);
     }
+    memoryStore = parsed;
     return parsed;
   } catch (err) {
-    console.error('Error reading store file, falling back to initial data:', err);
-    return {
-      donors: initialDonors,
-      requests: initialBloodRequests,
-      logs: initialActivityLogs,
-      admins: defaultAdmins,
-    };
+    console.error('Filesystem access failed, using memory store:', err);
+    if (!memoryStore) {
+      memoryStore = {
+        donors: initialDonors,
+        requests: initialBloodRequests,
+        logs: initialActivityLogs,
+        admins: defaultAdmins,
+      };
+    }
+    return memoryStore;
   }
 }
 
 function saveLocalStore(data: StoreData) {
-  if (!fs.existsSync(DATA_DIR)) {
-    fs.mkdirSync(DATA_DIR, { recursive: true });
+  memoryStore = data;
+  try {
+    if (!fs.existsSync(DATA_DIR)) {
+      fs.mkdirSync(DATA_DIR, { recursive: true });
+    }
+    fs.writeFileSync(STORE_FILE, JSON.stringify(data, null, 2), 'utf-8');
+  } catch (err) {
+    console.warn('Could not persist to disk, retained in memory:', err);
   }
-  fs.writeFileSync(STORE_FILE, JSON.stringify(data, null, 2), 'utf-8');
 }
 
 export const repository = {
