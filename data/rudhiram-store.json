@@ -9,13 +9,13 @@
       "district": "Thrissur",
       "locality": "irinjalakuda",
       "pincode": "680680",
-      "last_donation_date": null,
-      "availability": "Available",
-      "additional_information": "",
+      "last_donation_date": "2026-11-11",
+      "availability": "Busy",
+      "additional_information": "Donated for Patient: trail request at metro hosptal irinjalakua on 2026-11-11",
       "consent": true,
       "id": "0cd7f13a-5f19-4b77-855c-631bfce65522",
       "created_at": "2026-11-11T07:15:57.197Z",
-      "updated_at": "2026-11-11T07:15:57.197Z"
+      "updated_at": "2026-11-11T07:16:48.984Z"
     }
   ],
   "requests": [
@@ -30,14 +30,41 @@
       "district": "Thrissur",
       "required_date": "2026-11-11",
       "urgency": "Normal",
-      "additional_information": "",
-      "status": "Pending",
+      "additional_information": "Fulfilled by donor: Trail donor (A+, Ph: +91 9898989898) on 2026-11-11",
+      "status": "Completed",
       "id": "51e245c9-13cf-4366-be74-e48e2602db63",
       "created_at": "2026-11-11T07:16:26.021Z",
-      "updated_at": "2026-11-11T07:16:26.021Z"
+      "updated_at": "2026-11-11T07:16:48.978Z"
     }
   ],
   "logs": [
+    {
+      "id": "b69902b5-b24b-406b-8b2b-27ee42fe468e",
+      "admin_name": "NSS Programme Officer",
+      "action": "Donor Connected & Request Completed",
+      "record_type": "blood_request",
+      "record_id": "51e245c9-13cf-4366-be74-e48e2602db63",
+      "details": "Donor Trail donor (A+) successfully linked to Patient trail request (metro hosptal irinjalakua). Request marked Completed; Donor marked Busy (90-day cooldown until next donation).",
+      "timestamp": "2026-11-11T07:16:48.987Z"
+    },
+    {
+      "id": "3dc0fa0f-c0a7-45d1-b3c0-dc4fb99ef172",
+      "admin_name": "NSS Programme Officer",
+      "action": "Donor record updated",
+      "record_type": "donor",
+      "record_id": "0cd7f13a-5f19-4b77-855c-631bfce65522",
+      "details": "Updated donor Trail donor: availability, last_donation_date, additional_information",
+      "timestamp": "2026-11-11T07:16:48.985Z"
+    },
+    {
+      "id": "c7c28bb4-afe1-4200-9a0d-f0c9f7764fff",
+      "admin_name": "NSS Programme Officer",
+      "action": "Request status updated: Completed",
+      "record_type": "blood_request",
+      "record_id": "51e245c9-13cf-4366-be74-e48e2602db63",
+      "details": "Status changed to Completed for patient trail request",
+      "timestamp": "2026-11-11T07:16:48.980Z"
+    },
     {
       "id": "11ed8a7e-35c3-431e-a18f-14dca8a94062",
       "admin_name": "NSS Administrator",
