@@ -3,6 +3,15 @@
   "requests": [],
   "logs": [
     {
+      "id": "a1d9d503-b730-4918-929e-16fa8818eaab",
+      "admin_name": "NSS Administrator",
+      "action": "Administrator logged in",
+      "record_type": "auth",
+      "record_id": "admin_primary_01",
+      "details": "NSS Programme Officer (admin@christcollegeijk.edu.in) logged in successfully",
+      "timestamp": "2026-11-11T07:15:12.745Z"
+    },
+    {
       "id": "f5a24868-e0ce-4658-9de9-972df892b45b",
       "admin_name": "NSS Administrator",
       "action": "Administrator logged in",
