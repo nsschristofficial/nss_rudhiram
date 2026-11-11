@@ -38,6 +38,14 @@
   "requests": [],
   "logs": [
     {
+      "id": "21b7b781-3060-43d5-ad1a-93cd546d2e0f",
+      "admin_name": "NSS Administrator",
+      "action": "Failed administrator login attempt",
+      "record_type": "auth",
+      "details": "Attempted login for: admin@christcollageijk.edu.in",
+      "timestamp": "2026-11-11T07:39:31.241Z"
+    },
+    {
       "id": "4290e97d-600d-4b02-ae6b-2324861da1a8",
       "admin_name": "NSS Programme Officer",
       "action": "Blood request deleted",
