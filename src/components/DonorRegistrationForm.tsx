@@ -41,6 +41,7 @@ export default function DonorRegistrationForm() {
 
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [successData, setSuccessData] = useState<{ id: string; name: string } | null>(null);
 
   const handleChange = (
@@ -54,77 +55,96 @@ export default function DonorRegistrationForm() {
       setFormData((prev) => ({ ...prev, [name]: value }));
     }
     if (errorMsg) setErrorMsg(null);
+    if (fieldErrors[name]) {
+      setFieldErrors((prev) => {
+        const next = { ...prev };
+        delete next[name];
+        return next;
+      });
+    }
   };
 
   const handleBloodGroupSelect = (group: BloodGroup) => {
     setFormData((prev) => ({ ...prev, blood_group: group }));
     if (errorMsg) setErrorMsg(null);
+    if (fieldErrors.blood_group) {
+      setFieldErrors((prev) => {
+        const next = { ...prev };
+        delete next.blood_group;
+        return next;
+      });
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg(null);
+    const errors: Record<string, string> = {};
 
-    // 1. Client-Side Validation
+    // 1. Mandatory Client-Side Validations with field-level tagging
     if (!formData.full_name.trim() || formData.full_name.trim().length < 2) {
-      setErrorMsg('Please enter your full name (minimum 2 characters).');
-      return;
+      errors.full_name = 'Full Name is required (minimum 2 characters).';
     }
 
     const ageNum = parseInt(formData.age, 10);
-    if (isNaN(ageNum) || ageNum < 18) {
-      setErrorMsg('You must be at least 18 years old to register as a voluntary blood donor.');
-      return;
-    }
-    if (ageNum > 65) {
-      setErrorMsg('The maximum eligible age for blood donor registration is 65 years.');
-      return;
+    if (!formData.age || isNaN(ageNum)) {
+      errors.age = 'Age is required.';
+    } else if (ageNum < 18) {
+      errors.age = 'Must be at least 18 years old to donate blood.';
+    } else if (ageNum > 65) {
+      errors.age = 'Maximum eligible age is 65 years.';
     }
 
     if (!formData.blood_group) {
-      setErrorMsg('Please select your blood group.');
-      return;
+      errors.blood_group = 'Please select a blood group.';
     }
 
-    if (!isValidIndianMobile(formData.mobile)) {
-      setErrorMsg('Please enter a valid 10-digit Indian mobile number (e.g., 9847123456).');
-      return;
+    if (!formData.mobile.trim()) {
+      errors.mobile = 'Mobile number is required.';
+    } else if (!isValidIndianMobile(formData.mobile)) {
+      errors.mobile = 'Enter a valid 10-digit Indian mobile number (e.g. 9847123456).';
     }
 
     if (formData.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())) {
-      setErrorMsg('Please enter a valid email address or leave it blank.');
-      return;
+      errors.email = 'Please enter a valid email address or leave it blank.';
     }
 
     if (!formData.district) {
-      setErrorMsg('Please select your district.');
-      return;
+      errors.district = 'Please select your district.';
     }
 
     if (!formData.locality.trim() || formData.locality.trim().length < 2) {
-      setErrorMsg('Please enter your place or locality name.');
-      return;
+      errors.locality = 'Locality / place name is required.';
     }
 
     const cleanPin = formData.pincode.replace(/[^0-9]/g, '');
-    if (cleanPin.length !== 6) {
-      setErrorMsg('Please enter a valid 6-digit postal PIN code.');
-      return;
+    if (!cleanPin) {
+      errors.pincode = 'PIN Code is required.';
+    } else if (cleanPin.length !== 6) {
+      errors.pincode = 'PIN Code must be exactly 6 digits.';
     }
 
     if (formData.last_donation_date) {
       const d = new Date(formData.last_donation_date);
       if (d > new Date()) {
-        setErrorMsg('Last donation date cannot be in the future.');
-        return;
+        errors.last_donation_date = 'Last donation date cannot be in the future.';
       }
     }
 
     if (!formData.consent) {
-      setErrorMsg('You must agree to the voluntary consent statement to register.');
+      errors.consent = 'You must accept the voluntary consent declaration to proceed.';
+    }
+
+    if (Object.keys(errors).length > 0) {
+      setFieldErrors(errors);
+      const missingList = Object.values(errors).join(' • ');
+      setErrorMsg(`Please resolve the mandatory fields: ${missingList}`);
+      // Scroll to the top of the form or first error
+      window.scrollTo({ top: 120, behavior: 'smooth' });
       return;
     }
 
+    setFieldErrors({});
     setLoading(true);
 
     try {
@@ -286,8 +306,17 @@ export default function DonorRegistrationForm() {
               value={formData.full_name}
               onChange={handleChange}
               placeholder="e.g. Abhiram K. S."
-              className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#A50021] focus:border-transparent text-sm text-gray-900 placeholder-gray-400"
+              className={`w-full px-4 py-2.5 rounded-lg border text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 ${
+                fieldErrors.full_name
+                  ? 'border-red-500 bg-red-50/30 focus:ring-red-400'
+                  : 'border-gray-300 focus:ring-[#A50021]'
+              }`}
             />
+            {fieldErrors.full_name && (
+              <p className="text-xs text-red-600 mt-1 font-semibold flex items-center gap-1">
+                <span>⚠</span> {fieldErrors.full_name}
+              </p>
+            )}
           </div>
 
           {/* Age */}
@@ -307,8 +336,17 @@ export default function DonorRegistrationForm() {
               value={formData.age}
               onChange={handleChange}
               placeholder="18"
-              className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#A50021] focus:border-transparent text-sm text-gray-900 placeholder-gray-400"
+              className={`w-full px-4 py-2.5 rounded-lg border text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 ${
+                fieldErrors.age
+                  ? 'border-red-500 bg-red-50/30 focus:ring-red-400'
+                  : 'border-gray-300 focus:ring-[#A50021]'
+              }`}
             />
+            {fieldErrors.age && (
+              <p className="text-xs text-red-600 mt-1 font-semibold flex items-center gap-1">
+                <span>⚠</span> {fieldErrors.age}
+              </p>
+            )}
           </div>
 
           {/* Gender */}
@@ -349,9 +387,18 @@ export default function DonorRegistrationForm() {
                 value={formData.mobile}
                 onChange={handleChange}
                 placeholder="9847123456"
-                className="w-full pl-12 pr-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#A50021] focus:border-transparent text-sm text-gray-900 placeholder-gray-400"
+                className={`w-full pl-12 pr-4 py-2.5 rounded-lg border text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 ${
+                  fieldErrors.mobile
+                    ? 'border-red-500 bg-red-50/30 focus:ring-red-400'
+                    : 'border-gray-300 focus:ring-[#A50021]'
+                }`}
               />
             </div>
+            {fieldErrors.mobile && (
+              <p className="text-xs text-red-600 mt-1 font-semibold flex items-center gap-1">
+                <span>⚠</span> {fieldErrors.mobile}
+              </p>
+            )}
           </div>
 
           {/* Email */}
@@ -381,7 +428,7 @@ export default function DonorRegistrationForm() {
           <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-2">
             Select Your Blood Group <span className="text-red-600">*</span>
           </label>
-          <div className="grid grid-cols-4 sm:grid-cols-8 gap-2.5">
+          <div className={`grid grid-cols-4 sm:grid-cols-8 gap-2.5 p-1 rounded-xl ${fieldErrors.blood_group ? 'ring-2 ring-red-400 bg-red-50/20' : ''}`}>
             {BLOOD_GROUPS.map((group) => {
               const isSelected = formData.blood_group === group;
               return (
@@ -400,6 +447,11 @@ export default function DonorRegistrationForm() {
               );
             })}
           </div>
+          {fieldErrors.blood_group && (
+            <p className="text-xs text-red-600 mt-1.5 font-semibold flex items-center gap-1">
+              <span>⚠</span> {fieldErrors.blood_group}
+            </p>
+          )}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -492,8 +544,17 @@ export default function DonorRegistrationForm() {
               value={formData.locality}
               onChange={handleChange}
               placeholder="e.g. Irinjalakuda, Kodakara, Chalakudy"
-              className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#A50021] focus:border-transparent text-sm text-gray-900 placeholder-gray-400"
+              className={`w-full px-4 py-2.5 rounded-lg border text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 ${
+                fieldErrors.locality
+                  ? 'border-red-500 bg-red-50/30 focus:ring-red-400'
+                  : 'border-gray-300 focus:ring-[#A50021]'
+              }`}
             />
+            {fieldErrors.locality && (
+              <p className="text-xs text-red-600 mt-1 font-semibold flex items-center gap-1">
+                <span>⚠</span> {fieldErrors.locality}
+              </p>
+            )}
           </div>
 
           {/* PIN Code */}
@@ -509,8 +570,17 @@ export default function DonorRegistrationForm() {
               value={formData.pincode}
               onChange={handleChange}
               placeholder="680121"
-              className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#A50021] focus:border-transparent text-sm text-gray-900 placeholder-gray-400"
+              className={`w-full px-4 py-2.5 rounded-lg border text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 ${
+                fieldErrors.pincode
+                  ? 'border-red-500 bg-red-50/30 focus:ring-red-400'
+                  : 'border-gray-300 focus:ring-[#A50021]'
+              }`}
             />
+            {fieldErrors.pincode && (
+              <p className="text-xs text-red-600 mt-1 font-semibold flex items-center gap-1">
+                <span>⚠</span> {fieldErrors.pincode}
+              </p>
+            )}
           </div>
         </div>
 
@@ -535,7 +605,7 @@ export default function DonorRegistrationForm() {
 
       {/* SECTION 4: Mandatory Voluntary Consent & Medical Notice */}
       <div className="space-y-4 mb-8 pt-4 border-t border-gray-100">
-        <div className="bg-red-50/60 border border-red-200 rounded-xl p-4">
+        <div className={`border rounded-xl p-4 transition ${fieldErrors.consent ? 'bg-red-100/60 border-red-400 ring-2 ring-red-400' : 'bg-red-50/60 border-red-200'}`}>
           <label className="flex items-start gap-3 cursor-pointer">
             <input
               type="checkbox"
@@ -550,6 +620,11 @@ export default function DonorRegistrationForm() {
               <span className="text-red-600 font-bold">*</span>
             </span>
           </label>
+          {fieldErrors.consent && (
+            <p className="text-xs text-red-600 mt-2 font-semibold flex items-center gap-1">
+              <span>⚠</span> {fieldErrors.consent}
+            </p>
+          )}
         </div>
 
         <div className="text-xs text-gray-500 bg-gray-50 p-3.5 rounded-xl border border-gray-200 flex items-start gap-2.5">

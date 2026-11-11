@@ -350,12 +350,6 @@ export const repository = {
   async createDonor(data: Omit<Donor, 'id' | 'created_at' | 'updated_at'>): Promise<Donor> {
     const store = await getLocalStore();
 
-    // Check duplicate phone in active records
-    const existing = store.donors.find((d) => d.mobile === data.mobile);
-    if (existing) {
-      throw new Error(`A donor with mobile number ${data.mobile} is already registered.`);
-    }
-
     const now = new Date().toISOString();
     const newDonor: Donor = {
       ...data,

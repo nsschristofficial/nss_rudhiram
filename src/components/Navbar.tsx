@@ -23,13 +23,13 @@ export default function Navbar() {
   const isActive = (path: string) => pathname === path;
 
   return (
-    <header className="sticky top-0 z-50">
+    <header className="sticky top-0 z-50 w-full overflow-hidden">
       {/* Institutional Micro Announcement Bar */}
-      <div className="bg-[#1C1917] text-gray-300 py-1.5 px-4 text-[11px] font-medium tracking-wide border-b border-white/10">
-        <div className="max-w-7xl mx-auto flex items-center justify-between gap-3">
-          <div className="flex items-center gap-2 truncate">
+      <div className="bg-[#1C1917] text-gray-300 py-1.5 px-3 sm:px-4 text-[11px] font-medium tracking-wide border-b border-white/10 w-full">
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-2">
+          <div className="flex items-center gap-1.5 min-w-0">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse flex-shrink-0" />
-            <span className="font-semibold text-white tracking-wide">
+            <span className="font-semibold text-white tracking-wide truncate text-[10px] sm:text-[11px]">
               Christ College (Autonomous), Irinjalakuda
             </span>
             <span className="text-gray-500 hidden sm:inline">•</span>
@@ -38,7 +38,7 @@ export default function Navbar() {
             <span className="text-gray-400 hidden md:inline">University of Calicut</span>
           </div>
 
-          <div className="flex items-center gap-4 flex-shrink-0">
+          <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0">
             <a
               href="tel:+917907178135"
               className="hidden md:inline-flex items-center gap-1.5 text-gray-300 hover:text-white transition"
@@ -48,7 +48,7 @@ export default function Navbar() {
             </a>
             <Link
               href="/admin/login"
-              className="inline-flex items-center gap-1 px-3 py-0.5 rounded-full text-[11px] bg-white/10 hover:bg-white/20 text-white transition backdrop-blur-xs border border-white/10"
+              className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] sm:text-[11px] bg-white/10 hover:bg-white/20 text-white transition backdrop-blur-xs border border-white/10 whitespace-nowrap"
             >
               <Shield className="w-3 h-3 text-red-300" />
               <span>Admin Portal</span>
@@ -58,13 +58,13 @@ export default function Navbar() {
       </div>
 
       {/* Floating Glass Navigation Header */}
-      <div className="backdrop-blur-md bg-white/90 border-b border-gray-100/80 shadow-xs">
-        <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-20">
+      <div className="backdrop-blur-md bg-white/95 border-b border-gray-100/80 shadow-xs w-full">
+        <nav className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16 sm:h-20">
             {/* Logo & Identity */}
-            <Link href="/" className="flex items-center gap-3.5 group">
-              <div className="flex items-center -space-x-2 hover:space-x-1 transition-all duration-300">
-                <div className="relative w-11 h-11 rounded-2xl overflow-hidden p-1 bg-white shadow-md border border-gray-100 flex-shrink-0 group-hover:rotate-[-4deg] transition duration-300">
+            <Link href="/" className="flex items-center gap-2 sm:gap-3.5 group min-w-0">
+              <div className="flex items-center -space-x-2 hover:space-x-1 transition-all duration-300 flex-shrink-0">
+                <div className="relative w-9 h-9 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl overflow-hidden p-1 bg-white shadow-md border border-gray-100 flex-shrink-0 group-hover:rotate-[-4deg] transition duration-300">
                   <Image
                     src="/images/christ-college-logo.jpg"
                     alt="Christ College Crest"
@@ -74,7 +74,7 @@ export default function Navbar() {
                     priority
                   />
                 </div>
-                <div className="relative w-11 h-11 rounded-2xl overflow-hidden p-1 bg-white shadow-md border border-gray-100 flex-shrink-0 group-hover:rotate-[4deg] transition duration-300">
+                <div className="relative w-9 h-9 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl overflow-hidden p-1 bg-white shadow-md border border-gray-100 flex-shrink-0 group-hover:rotate-[4deg] transition duration-300">
                   <Image
                     src="/images/nss-logo.png"
                     alt="NSS Logo"
@@ -86,16 +86,16 @@ export default function Navbar() {
                 </div>
               </div>
 
-              <div className="flex flex-col">
-                <div className="flex items-center gap-2">
-                  <span className="text-2xl font-black tracking-tight text-[#A50021] group-hover:text-[#7B0019] transition">
+              <div className="flex flex-col min-w-0">
+                <div className="flex items-center gap-1.5 sm:gap-2">
+                  <span className="text-xl sm:text-2xl font-black tracking-tight text-[#A50021] group-hover:text-[#7B0019] transition">
                     RUDHIRAM
                   </span>
-                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-red-50 text-[#A50021] border border-red-200">
+                  <span className="inline-flex items-center px-1.5 py-0.2 rounded-full text-[9px] sm:text-[10px] font-bold bg-red-50 text-[#A50021] border border-red-200">
                     NSS
                   </span>
                 </div>
-                <span className="text-[10px] uppercase font-bold tracking-widest text-gray-400">
+                <span className="text-[8px] sm:text-[10px] uppercase font-bold tracking-wider sm:tracking-widest text-gray-400 truncate">
                   Centralised Blood Donor Portal
                 </span>
               </div>
@@ -147,21 +147,21 @@ export default function Navbar() {
               })}
             </div>
 
-            {/* Mobile Hamburger Button */}
-            <div className="lg:hidden flex items-center gap-2">
+            {/* Mobile Actions: Request Button & Hamburger */}
+            <div className="lg:hidden flex items-center gap-1.5 flex-shrink-0">
               <Link
                 href="/request"
-                className="inline-flex items-center gap-1 px-3.5 py-2 rounded-full text-xs font-bold bg-[#A50021] text-white shadow-xs"
+                className="inline-flex items-center gap-1 px-3 py-1.5 rounded-full text-[11px] sm:text-xs font-bold bg-[#A50021] text-white shadow-xs"
               >
                 <Droplet className="w-3 h-3 fill-white" />
                 <span>Request</span>
               </Link>
               <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="p-2 rounded-2xl text-gray-700 hover:text-gray-900 hover:bg-gray-100 focus:outline-none"
+                className="p-1.5 rounded-xl text-gray-700 hover:text-gray-900 hover:bg-gray-100 focus:outline-none"
                 aria-label="Toggle menu"
               >
-                {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+                {isOpen ? <X className="w-5 h-5 sm:w-6 sm:h-6" /> : <Menu className="w-5 h-5 sm:w-6 sm:h-6" />}
               </button>
             </div>
           </div>

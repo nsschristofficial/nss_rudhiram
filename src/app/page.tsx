@@ -36,17 +36,17 @@ export default function HomePage() {
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative">
             <div className="text-center max-w-3xl mx-auto space-y-7">
               {/* Floating Pill Badge */}
-              <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-white/80 border border-red-200/80 shadow-xs backdrop-blur-md text-xs font-bold text-[#A50021] hover:shadow-md transition">
-                <span className="flex h-2 w-2 relative">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full bg-white/90 border border-red-200/80 shadow-xs backdrop-blur-md text-[11px] sm:text-xs font-bold text-[#A50021] hover:shadow-md transition max-w-full text-center">
+                <span className="flex h-2 w-2 relative flex-shrink-0">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-[#A50021]"></span>
                 </span>
-                <span>NSS Units 20 &amp; 49 • Christ College (Autonomous), Irinjalakuda</span>
+                <span className="leading-snug">NSS Units 20 &amp; 49 • Christ College (Autonomous), Irinjalakuda</span>
               </div>
 
               {/* Title & Tagline with Fluid Elegance */}
               <div className="space-y-4">
-                <h1 className="text-5xl sm:text-7xl font-black tracking-tight text-gray-950 leading-[1.08]">
+                <h1 className="text-4xl sm:text-6xl md:text-7xl font-black tracking-tight text-gray-950 leading-[1.1] sm:leading-[1.08] break-words">
                   Every Drop Holds A <span className="text-[#A50021] relative inline-block">
                     Heartbeat
                     <svg className="absolute -bottom-2 left-0 w-full h-3 text-red-200/80 -z-10" viewBox="0 0 100 20" preserveAspectRatio="none">
@@ -55,7 +55,7 @@ export default function HomePage() {
                   </span>
                 </h1>
 
-                <p className="text-lg sm:text-xl font-bold tracking-wide text-gray-800 uppercase">
+                <p className="text-base sm:text-xl font-bold tracking-wide text-gray-800 uppercase">
                   RUDHIRAM – A Centralised Blood Donor Portal
                 </p>
 

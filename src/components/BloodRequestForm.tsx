@@ -35,6 +35,7 @@ export default function BloodRequestForm() {
 
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [successData, setSuccessData] = useState<{ id: string; patient: string } | null>(null);
 
   const handleChange = (
@@ -43,67 +44,84 @@ export default function BloodRequestForm() {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
     if (errorMsg) setErrorMsg(null);
+    if (fieldErrors[name]) {
+      setFieldErrors((prev) => {
+        const next = { ...prev };
+        delete next[name];
+        return next;
+      });
+    }
   };
 
   const handleBloodGroupSelect = (group: BloodGroup) => {
     setFormData((prev) => ({ ...prev, blood_group: group }));
     if (errorMsg) setErrorMsg(null);
+    if (fieldErrors.blood_group) {
+      setFieldErrors((prev) => {
+        const next = { ...prev };
+        delete next.blood_group;
+        return next;
+      });
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setErrorMsg(null);
+    const errors: Record<string, string> = {};
 
     // Validation
     if (!formData.patient_name.trim() || formData.patient_name.trim().length < 2) {
-      setErrorMsg('Please enter the patient name.');
-      return;
+      errors.patient_name = 'Patient Name is required.';
     }
 
     if (!formData.contact_person.trim() || formData.contact_person.trim().length < 2) {
-      setErrorMsg('Please enter the name of the attender or contact person.');
-      return;
+      errors.contact_person = 'Attender / Contact Person name is required.';
     }
 
-    if (!isValidIndianMobile(formData.contact_number)) {
-      setErrorMsg('Please enter a valid 10-digit Indian contact number.');
-      return;
+    if (!formData.contact_number.trim()) {
+      errors.contact_number = 'Contact number is required.';
+    } else if (!isValidIndianMobile(formData.contact_number)) {
+      errors.contact_number = 'Enter a valid 10-digit Indian contact number.';
     }
 
     if (!formData.blood_group) {
-      setErrorMsg('Please select the required blood group.');
-      return;
+      errors.blood_group = 'Please select required blood group.';
     }
 
     const units = parseInt(String(formData.units_required), 10);
     if (isNaN(units) || units < 1 || units > 50) {
-      setErrorMsg('Please specify units required (between 1 and 50).');
-      return;
+      errors.units_required = 'Units required must be between 1 and 50.';
     }
 
     if (!formData.hospital_name.trim() || formData.hospital_name.trim().length < 2) {
-      setErrorMsg('Please provide the hospital or medical centre name.');
-      return;
+      errors.hospital_name = 'Hospital or medical centre name is required.';
     }
 
     if (!formData.hospital_location.trim() || formData.hospital_location.trim().length < 2) {
-      setErrorMsg('Please provide the hospital city / location.');
-      return;
+      errors.hospital_location = 'Hospital location / city is required.';
     }
 
     if (!formData.required_date) {
-      setErrorMsg('Please select the date blood is required.');
+      errors.required_date = 'Required date is mandatory.';
+    } else {
+      const reqDate = new Date(formData.required_date);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      if (reqDate < today) {
+        errors.required_date = 'Required date cannot be in the past.';
+      }
+    }
+
+    if (Object.keys(errors).length > 0) {
+      setFieldErrors(errors);
+      const missingList = Object.values(errors).join(' • ');
+      setErrorMsg(`Please resolve the mandatory fields: ${missingList}`);
+      window.scrollTo({ top: 120, behavior: 'smooth' });
       return;
     }
 
-    const reqDate = new Date(formData.required_date);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    if (reqDate < today) {
-      setErrorMsg('The required date cannot be in the past.');
-      return;
-    }
-
+    setFieldErrors({});
     setLoading(true);
 
     try {
@@ -252,8 +270,17 @@ export default function BloodRequestForm() {
               value={formData.patient_name}
               onChange={handleChange}
               placeholder="e.g. Lakshmi Kutty Amma"
-              className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#A50021] focus:border-transparent text-sm text-gray-900 placeholder-gray-400"
+              className={`w-full px-4 py-2.5 rounded-lg border text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 ${
+                fieldErrors.patient_name
+                  ? 'border-red-500 bg-red-50/30 focus:ring-red-400'
+                  : 'border-gray-300 focus:ring-[#A50021]'
+              }`}
             />
+            {fieldErrors.patient_name && (
+              <p className="text-xs text-red-600 mt-1 font-semibold flex items-center gap-1">
+                <span>⚠</span> {fieldErrors.patient_name}
+              </p>
+            )}
           </div>
 
           {/* Urgency Level */}
@@ -292,7 +319,7 @@ export default function BloodRequestForm() {
           <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-2">
             Required Blood Group <span className="text-red-600">*</span>
           </label>
-          <div className="grid grid-cols-4 sm:grid-cols-8 gap-2.5">
+          <div className={`grid grid-cols-4 sm:grid-cols-8 gap-2.5 p-1 rounded-xl ${fieldErrors.blood_group ? 'ring-2 ring-red-400 bg-red-50/20' : ''}`}>
             {BLOOD_GROUPS.map((group) => {
               const isSelected = formData.blood_group === group;
               return (
@@ -311,6 +338,11 @@ export default function BloodRequestForm() {
               );
             })}
           </div>
+          {fieldErrors.blood_group && (
+            <p className="text-xs text-red-600 mt-1.5 font-semibold flex items-center gap-1">
+              <span>⚠</span> {fieldErrors.blood_group}
+            </p>
+          )}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -368,8 +400,17 @@ export default function BloodRequestForm() {
               value={formData.hospital_name}
               onChange={handleChange}
               placeholder="e.g. Taluk Hospital Irinjalakuda / Jubilee Mission Thrissur"
-              className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#A50021] focus:border-transparent text-sm text-gray-900 placeholder-gray-400"
+              className={`w-full px-4 py-2.5 rounded-lg border text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 ${
+                fieldErrors.hospital_name
+                  ? 'border-red-500 bg-red-50/30 focus:ring-red-400'
+                  : 'border-gray-300 focus:ring-[#A50021]'
+              }`}
             />
+            {fieldErrors.hospital_name && (
+              <p className="text-xs text-red-600 mt-1 font-semibold flex items-center gap-1">
+                <span>⚠</span> {fieldErrors.hospital_name}
+              </p>
+            )}
           </div>
 
           {/* District */}
@@ -404,8 +445,17 @@ export default function BloodRequestForm() {
               value={formData.hospital_location}
               onChange={handleChange}
               placeholder="e.g. Irinjalakuda Town, Thrissur"
-              className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#A50021] focus:border-transparent text-sm text-gray-900 placeholder-gray-400"
+              className={`w-full px-4 py-2.5 rounded-lg border text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 ${
+                fieldErrors.hospital_location
+                  ? 'border-red-500 bg-red-50/30 focus:ring-red-400'
+                  : 'border-gray-300 focus:ring-[#A50021]'
+              }`}
             />
+            {fieldErrors.hospital_location && (
+              <p className="text-xs text-red-600 mt-1 font-semibold flex items-center gap-1">
+                <span>⚠</span> {fieldErrors.hospital_location}
+              </p>
+            )}
           </div>
         </div>
       </div>
@@ -429,8 +479,17 @@ export default function BloodRequestForm() {
               value={formData.contact_person}
               onChange={handleChange}
               placeholder="e.g. Ramesh K. (Brother / Attender)"
-              className="w-full px-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#A50021] focus:border-transparent text-sm text-gray-900 placeholder-gray-400"
+              className={`w-full px-4 py-2.5 rounded-lg border text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 ${
+                fieldErrors.contact_person
+                  ? 'border-red-500 bg-red-50/30 focus:ring-red-400'
+                  : 'border-gray-300 focus:ring-[#A50021]'
+              }`}
             />
+            {fieldErrors.contact_person && (
+              <p className="text-xs text-red-600 mt-1 font-semibold flex items-center gap-1">
+                <span>⚠</span> {fieldErrors.contact_person}
+              </p>
+            )}
           </div>
 
           {/* Contact Mobile */}
@@ -450,9 +509,18 @@ export default function BloodRequestForm() {
                 value={formData.contact_number}
                 onChange={handleChange}
                 placeholder="9847998877"
-                className="w-full pl-12 pr-4 py-2.5 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#A50021] focus:border-transparent text-sm text-gray-900 placeholder-gray-400"
+                className={`w-full pl-12 pr-4 py-2.5 rounded-lg border text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 ${
+                  fieldErrors.contact_number
+                    ? 'border-red-500 bg-red-50/30 focus:ring-red-400'
+                    : 'border-gray-300 focus:ring-[#A50021]'
+                }`}
               />
             </div>
+            {fieldErrors.contact_number && (
+              <p className="text-xs text-red-600 mt-1 font-semibold flex items-center gap-1">
+                <span>⚠</span> {fieldErrors.contact_number}
+              </p>
+            )}
           </div>
 
           {/* Additional Info */}
