@@ -33,27 +33,19 @@
       "id": "b333aa5c-50b9-41bc-ab4c-8419fd50dfc1",
       "created_at": "2026-11-11T07:34:48.563Z",
       "updated_at": "2026-11-11T07:34:48.563Z"
-    },
-    {
-      "full_name": "Trail donor",
-      "age": 18,
-      "gender": "Male",
-      "blood_group": "A+",
-      "mobile": "9898989898",
-      "district": "Thrissur",
-      "locality": "irinjalakuda",
-      "pincode": "680680",
-      "last_donation_date": "2026-11-11",
-      "availability": "Busy",
-      "additional_information": "Donated for Patient: trail request at metro hosptal irinjalakua on 2026-11-11",
-      "consent": true,
-      "id": "0cd7f13a-5f19-4b77-855c-631bfce65522",
-      "created_at": "2026-11-11T07:15:57.197Z",
-      "updated_at": "2026-11-11T07:16:48.984Z"
     }
   ],
   "requests": [],
   "logs": [
+    {
+      "id": "3cd6bb42-5f50-4f3a-93e3-699cec9a86c1",
+      "admin_name": "NSS Programme Officer",
+      "action": "Donor record deleted",
+      "record_type": "donor",
+      "record_id": "0cd7f13a-5f19-4b77-855c-631bfce65522",
+      "details": "Deleted donor Trail donor",
+      "timestamp": "2026-11-11T12:15:25.849Z"
+    },
     {
       "id": "1b7be525-bb8b-4bda-8cf8-7ec82ed45586",
       "admin_name": "NSS Programme Officer",
