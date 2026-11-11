@@ -9,13 +9,14 @@
       "district": "Thrissur",
       "locality": "Ijk",
       "pincode": "680617",
-      "last_donation_date": "2026-08-02",
+      "last_donation_date": "2026-11-11",
       "availability": "Available",
       "additional_information": "",
       "consent": true,
       "id": "f24abdac-4875-432f-b6f9-dbab2e2c275b",
       "created_at": "2026-11-11T07:51:05.854Z",
-      "updated_at": "2026-11-11T07:51:05.854Z"
+      "updated_at": "2026-11-11T12:20:52.534Z",
+      "email": ""
     },
     {
       "full_name": "Trail donor",
@@ -55,6 +56,15 @@
     }
   ],
   "logs": [
+    {
+      "id": "2dbe3d09-0fe9-4854-9fc5-c13676961cde",
+      "admin_name": "NSS Programme Officer",
+      "action": "Donor record updated",
+      "record_type": "donor",
+      "record_id": "f24abdac-4875-432f-b6f9-dbab2e2c275b",
+      "details": "Updated donor Alex K.P: full_name, age, gender, blood_group, mobile, email, district, locality, pincode, last_donation_date, availability, additional_information",
+      "timestamp": "2026-11-11T12:20:52.883Z"
+    },
     {
       "id": "3cd6bb42-5f50-4f3a-93e3-699cec9a86c1",
       "admin_name": "NSS Programme Officer",
