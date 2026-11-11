@@ -55,6 +55,14 @@
   "requests": [],
   "logs": [
     {
+      "id": "1b7be525-bb8b-4bda-8cf8-7ec82ed45586",
+      "admin_name": "NSS Programme Officer",
+      "action": "Exported donor records (CSV)",
+      "record_type": "export",
+      "details": "Exported 3 records. Filter: blood_group=ALL, district=ALL",
+      "timestamp": "2026-11-11T07:56:47.321Z"
+    },
+    {
       "id": "9918faec-a438-4f40-8dc1-99ba5b84862e",
       "admin_name": "NSS Administrator",
       "action": "Administrator logged in",
