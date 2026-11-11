@@ -48,10 +48,33 @@ export interface ActivityLog {
   admin_id?: string;
   admin_name?: string;
   action: string;
-  record_type: 'donor' | 'blood_request' | 'auth' | 'export' | 'system';
+  record_type: 'donor' | 'blood_request' | 'auth' | 'export' | 'system' | 'fulfillment';
   record_id?: string;
   details?: string;
   timestamp: string;
+}
+
+export interface FulfillmentRecord {
+  id: string;
+  requestId: string;
+  donorId: string;
+  patient_name: string;
+  donor_name: string;
+  blood_group: BloodGroup;
+  units_required: number;
+  hospital_name: string;
+  hospital_location: string;
+  district: string;
+  patient_contact_person: string;
+  patient_contact_number: string;
+  donor_mobile: string;
+  donor_locality: string;
+  donor_district: string;
+  donation_date: string;
+  connected_by: string;
+  cooldown_until: string;
+  notes?: string;
+  created_at: string;
 }
 
 export type AdminRole = 'superadmin' | 'coordinator' | 'volunteer' | 'viewer';

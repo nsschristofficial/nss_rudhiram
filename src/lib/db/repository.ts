@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import crypto, { randomUUID } from 'crypto';
-import { Donor, BloodRequest, ActivityLog, DashboardStats, BloodGroup, AvailabilityStatus, RequestUrgency, RequestStatus, AdminUser } from '@/types';
+import { Donor, BloodRequest, ActivityLog, DashboardStats, BloodGroup, AvailabilityStatus, RequestUrgency, RequestStatus, AdminUser, FulfillmentRecord } from '@/types';
 import { initialDonors, initialBloodRequests, initialActivityLogs } from './seedData';
 import { createAdminClient } from '../supabase/admin';
 import { BLOOD_COMPATIBILITY } from '../constants';
@@ -47,6 +47,7 @@ interface StoreData {
   requests: BloodRequest[];
   logs: ActivityLog[];
   admins: AdminUser[];
+  fulfillments?: FulfillmentRecord[];
 }
 
 // Cloud Persistence via GitHub API (Active in Serverless / Vercel Production)
@@ -874,5 +875,65 @@ export const repository = {
     );
 
     return true;
+  },
+
+  // Fulfillments (Connected Donor & Requester pairs)
+  async getFulfillments(filters?: {
+    search?: string;
+    blood_group?: string;
+    district?: string;
+    hospital_name?: string;
+  }): Promise<FulfillmentRecord[]> {
+    const store = await getLocalStore();
+    let records = store.fulfillments || [];
+
+    if (filters?.blood_group && filters.blood_group !== 'ALL') {
+      records = records.filter((f) => f.blood_group === filters.blood_group);
+    }
+    if (filters?.district && filters.district !== 'ALL') {
+      records = records.filter((f) => f.district.toLowerCase() === filters.district!.toLowerCase());
+    }
+    if (filters?.hospital_name && filters.hospital_name !== 'ALL') {
+      records = records.filter((f) => f.hospital_name.toLowerCase().includes(filters.hospital_name!.toLowerCase()));
+    }
+    if (filters?.search) {
+      const q = filters.search.toLowerCase();
+      records = records.filter(
+        (f) =>
+          f.patient_name.toLowerCase().includes(q) ||
+          f.donor_name.toLowerCase().includes(q) ||
+          f.hospital_name.toLowerCase().includes(q) ||
+          f.patient_contact_number.includes(q) ||
+          f.donor_mobile.includes(q)
+      );
+    }
+
+    return records.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+  },
+
+  async createFulfillment(record: Omit<FulfillmentRecord, 'id' | 'created_at'>): Promise<FulfillmentRecord> {
+    const store = await getLocalStore();
+    if (!store.fulfillments) {
+      store.fulfillments = [];
+    }
+
+    const newRecord: FulfillmentRecord = {
+      ...record,
+      id: typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `ful_${Date.now()}`,
+      created_at: new Date().toISOString(),
+    };
+
+    store.fulfillments.unshift(newRecord);
+    saveLocalStore(store);
+
+    await this.logActivity(
+      `Blood Request Fulfilled & Connected`,
+      'fulfillment',
+      newRecord.id,
+      `Connected Donor ${newRecord.donor_name} to Patient ${newRecord.patient_name} (${newRecord.blood_group}, ${newRecord.units_required} units) at ${newRecord.hospital_name}`,
+      newRecord.connected_by || 'Administrator'
+    );
+
+    return newRecord;
   },
 };

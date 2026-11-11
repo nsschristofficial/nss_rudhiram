@@ -17,6 +17,7 @@ import {
   Shield,
   UserCheck,
   Eye,
+  CheckCircle2,
 } from 'lucide-react';
 import { AdminUser } from '@/types';
 
@@ -36,6 +37,7 @@ export default function AdminSidebar({ onCloseMobile }: SidebarProps) {
     { name: 'Donor Management', href: '/admin/dashboard/donors', icon: Users },
     { name: 'Blood Requests', href: '/admin/dashboard/requests', icon: Droplet },
     { name: 'Smart Donor Matching', href: '/admin/dashboard/match', icon: HeartHandshake },
+    { name: 'Connected Fulfillments', href: '/admin/dashboard/fulfillments', icon: CheckCircle2 },
     { name: 'Activity Logs', href: '/admin/dashboard/logs', icon: History },
     { name: 'Export Data', href: '/admin/dashboard/export', icon: FileSpreadsheet },
     { name: 'Manage Admins', href: '/admin/dashboard/admins', icon: UserCheck },

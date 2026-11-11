@@ -10,13 +10,80 @@ export async function GET(request: NextRequest) {
   }
 
   const { searchParams } = new URL(request.url);
-  const type = searchParams.get('type') || 'donors'; // 'donors' or 'requests'
+  const type = searchParams.get('type') || 'donors'; // 'donors' | 'requests' | 'fulfillments'
   const blood_group = searchParams.get('blood_group') || undefined;
   const district = searchParams.get('district') || undefined;
+  const hospital_name = searchParams.get('hospital_name') || undefined;
   const today = new Date().toISOString().split('T')[0];
 
   try {
-    if (type === 'donors') {
+    if (type === 'fulfillments') {
+      const fulfillments = await repository.getFulfillments({ blood_group, district, hospital_name });
+
+      const headers = [
+        'Fulfillment ID',
+        'Request ID',
+        'Donor ID',
+        'Patient Name',
+        'Donor Name',
+        'Blood Group',
+        'Units Donated',
+        'Hospital Name',
+        'Hospital Location',
+        'District',
+        'Patient Contact Person',
+        'Patient Contact Number',
+        'Donor Mobile',
+        'Donor Locality',
+        'Donor District',
+        'Donation Date',
+        'Connected By',
+        'Cooldown Until',
+        'Notes',
+        'Timestamp',
+      ];
+
+      const rows = fulfillments.map((f) => [
+        sanitizeCsvField(f.id),
+        sanitizeCsvField(f.requestId),
+        sanitizeCsvField(f.donorId),
+        sanitizeCsvField(f.patient_name),
+        sanitizeCsvField(f.donor_name),
+        sanitizeCsvField(f.blood_group),
+        sanitizeCsvField(f.units_required),
+        sanitizeCsvField(f.hospital_name),
+        sanitizeCsvField(f.hospital_location || ''),
+        sanitizeCsvField(f.district),
+        sanitizeCsvField(f.patient_contact_person),
+        sanitizeCsvField(f.patient_contact_number),
+        sanitizeCsvField(f.donor_mobile),
+        sanitizeCsvField(f.donor_locality || ''),
+        sanitizeCsvField(f.donor_district || ''),
+        sanitizeCsvField(f.donation_date),
+        sanitizeCsvField(f.connected_by),
+        sanitizeCsvField(f.cooldown_until),
+        sanitizeCsvField(f.notes || ''),
+        sanitizeCsvField(formatDate(f.created_at)),
+      ]);
+
+      const csvContent = [headers.join(','), ...rows.map((r) => r.join(','))].join('\r\n');
+
+      await repository.logActivity(
+        'Exported fulfillment pairings (CSV)',
+        'export',
+        undefined,
+        `Exported ${fulfillments.length} fulfilled connections. Filter: blood_group=${blood_group || 'ALL'}, district=${district || 'ALL'}`,
+        admin.name
+      );
+
+      return new NextResponse(csvContent, {
+        status: 200,
+        headers: {
+          'Content-Type': 'text/csv; charset=utf-8',
+          'Content-Disposition': `attachment; filename="rudhiram_fulfillments_${today}.csv"`,
+        },
+      });
+    } else if (type === 'donors') {
       const donors = await repository.getDonors({ blood_group, district });
 
       const headers = [

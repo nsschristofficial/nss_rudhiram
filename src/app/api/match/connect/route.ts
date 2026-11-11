@@ -60,7 +60,34 @@ export async function POST(request: NextRequest) {
       admin.name
     );
 
-    // 4. Log detailed activity
+    // 4. Calculate 90-day cooldown date
+    const dDate = new Date(todayDate);
+    dDate.setDate(dDate.getDate() + 90);
+    const cooldownUntil = dDate.toISOString().split('T')[0];
+
+    // 5. Create persistent Fulfillment record
+    const fulfillment = await repository.createFulfillment({
+      requestId: bloodReq.id,
+      donorId: donor.id,
+      patient_name: bloodReq.patient_name,
+      donor_name: donor.full_name,
+      blood_group: bloodReq.blood_group,
+      units_required: bloodReq.units_required,
+      hospital_name: bloodReq.hospital_name,
+      hospital_location: bloodReq.hospital_location || '',
+      district: bloodReq.district,
+      patient_contact_person: bloodReq.contact_person,
+      patient_contact_number: bloodReq.contact_number,
+      donor_mobile: donor.mobile,
+      donor_locality: donor.locality || '',
+      donor_district: donor.district,
+      donation_date: todayDate,
+      connected_by: admin.name,
+      cooldown_until: cooldownUntil,
+      notes: `Fulfilled via Smart Matching system. Cooldown until ${cooldownUntil}`,
+    });
+
+    // 6. Log detailed activity
     await repository.logActivity(
       'Donor Connected & Request Completed',
       'blood_request',
@@ -75,6 +102,7 @@ export async function POST(request: NextRequest) {
       data: {
         donor: updatedDonor,
         request: updatedRequest,
+        fulfillment,
       },
     });
   } catch (err: any) {
