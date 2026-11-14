@@ -91,6 +91,14 @@
   ],
   "logs": [
     {
+      "id": "3786e6c3-9797-4b29-8c31-5069bcd36f7d",
+      "admin_name": "NSS Administrator",
+      "action": "Failed administrator login attempt",
+      "record_type": "auth",
+      "details": "Attempted login for: viewer@christcollegeijk.edu.in",
+      "timestamp": "2026-11-14T08:24:25.571Z"
+    },
+    {
       "id": "89284304-2731-4d45-9ab4-3e393ddb3685",
       "admin_name": "NSS Administrator",
       "action": "Failed administrator login attempt",
