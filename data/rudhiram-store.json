@@ -91,6 +91,15 @@
   ],
   "logs": [
     {
+      "id": "c020a580-4818-45de-b6b2-c9e2a8246c49",
+      "admin_name": "NSS Administrator",
+      "action": "Administrator logged out",
+      "record_type": "auth",
+      "record_id": "admin_primary_01",
+      "details": "NSS Programme Officer logged out",
+      "timestamp": "2026-11-14T08:22:42.053Z"
+    },
+    {
       "id": "44160a8f-64b8-4367-ad6a-c60e69226ade",
       "admin_name": "NSS Programme Officer",
       "action": "Request status updated: Completed",
