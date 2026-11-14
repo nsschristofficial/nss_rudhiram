@@ -91,6 +91,15 @@
   ],
   "logs": [
     {
+      "id": "ad58a373-bab4-4667-ba29-7fbc4a8a86fc",
+      "admin_name": "NSS Administrator",
+      "action": "Administrator logged in",
+      "record_type": "auth",
+      "record_id": "admin_coord_02",
+      "details": "NSS Student Volunteer Coordinator (coordinator@christcollegeijk.edu.in) logged in successfully",
+      "timestamp": "2026-11-14T08:25:37.725Z"
+    },
+    {
       "id": "3786e6c3-9797-4b29-8c31-5069bcd36f7d",
       "admin_name": "NSS Administrator",
       "action": "Failed administrator login attempt",
