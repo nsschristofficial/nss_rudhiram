@@ -83,13 +83,22 @@
       "required_date": "2026-11-11",
       "urgency": "Normal",
       "additional_information": "Fulfilled by donor: Alex K.P (O+, Ph: +91 9746371985) on 2026-11-11",
-      "status": "Cancelled",
+      "status": "Completed",
       "id": "2270c52a-6ff8-4077-a579-e5eac56326b0",
       "created_at": "2026-11-11T12:18:44.808Z",
-      "updated_at": "2026-11-14T08:20:15.237Z"
+      "updated_at": "2026-11-14T08:20:19.254Z"
     }
   ],
   "logs": [
+    {
+      "id": "a3c328dc-5a90-44de-9374-1b09938f5146",
+      "admin_name": "NSS Programme Officer",
+      "action": "Request status updated: Completed",
+      "record_type": "blood_request",
+      "record_id": "2270c52a-6ff8-4077-a579-e5eac56326b0",
+      "details": "Status changed to Completed for patient Alex taril",
+      "timestamp": "2026-11-14T08:20:19.255Z"
+    },
     {
       "id": "ca8ae37d-01b7-4dc1-924b-c0523d8ffe4a",
       "admin_name": "NSS Programme Officer",
